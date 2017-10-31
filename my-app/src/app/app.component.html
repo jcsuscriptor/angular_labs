@@ -1,0 +1,24 @@
+ 
+<h1>{{title}}</h1>
+
+
+
+<h2>My Artists</h2>
+
+<div>
+  <label>Hero name:</label> <input #artistName />
+  <button (click)="add(artistName.value); artistName.value=''">
+    Add
+  </button>
+</div>
+
+<ul class="list">
+  <li *ngFor="let item of artists" (click)="onSelect(item)"
+    [class.selected]="item === selectedArtist"
+    >
+    <span class="badge">{{item.objectId}}</span> {{item.name}}
+  </li>
+</ul>
+ 
+<artist-detail [artist]="selectedArtist"></artist-detail>
+
