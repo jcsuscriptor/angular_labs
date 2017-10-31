@@ -7,6 +7,13 @@ import 'rxjs/add/operator/toPromise';
 import { Artist } from './artist';
 import { ARTISTS } from './mock-artist';
 
+ 
+const Parse: any = require("parse");
+//import { Parse } from 'parse';
+
+Parse.initialize("123"),
+Parse.serverURL = 'http://localhost:1337/parse'
+
 
 @Injectable()
 export class ArtistService {
@@ -32,6 +39,38 @@ export class ArtistService {
 
     getAtists(): Promise<Artist[]> {
        
+       
+        var ParseArtist = Parse.Object.extend("Artist");
+        var query = new Parse.Query(ParseArtist);
+        
+
+        //query.equalTo("playerName", "Dan Stemkoski");
+        query.find({
+          success: function(results) {
+            console.log("Successfully retrieved " + results.length + " artist.");
+            // Do something with the returned Parse.Object values
+            for (var i = 0; i < results.length; i++) {
+              var object = results[i];
+              console.log(object.id + ' - ' + object.get('name'));
+            }
+          },
+          error: function(error) {
+            console.log("Error: " + error.code + " " + error.message);
+          }
+        });
+
+        
+        var queryGame = new Parse.Query("GameScore");
+        queryGame.find().then(function(results) {
+            console.log("Successfully retrieved " + results.length + " scores.");
+            // Do something with the returned Parse.Object values
+            for (var i = 0; i < results.length; i++) {
+              var object = results[i];
+              console.log(object.id + ' - ' + object.get('name'));
+            }
+        });
+        
+
         return this.http.get(this.artistUrl,{headers: this.headers})
             .toPromise()
             .then(response => response.json().results as Artist[])
